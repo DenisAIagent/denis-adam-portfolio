@@ -1,0 +1,6 @@
+# Ne pas déployer : sources/scratch, fichiers lourds, OS junk
+CV Denis ADAM/
+node_modules/
+**/.DS_Store
+*.log
+.git/

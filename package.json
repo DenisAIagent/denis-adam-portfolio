@@ -1,0 +1,12 @@
+{
+  "name": "denis-adam-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site de présentation interactive — Denis Adam (HTML/CSS/JS, apps live embarquées)",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

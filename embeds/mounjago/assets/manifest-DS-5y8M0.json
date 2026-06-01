@@ -1,0 +1,45 @@
+{
+  "name": "MounjaGO - Suivi Mounjaro",
+  "short_name": "MounjaGO",
+  "description": "Application de suivi pour le traitement Mounjaro et GLP-1. Suivez vos injections, surveillez votre poids, visualisez vos progres en toute confidentialite.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0d9488",
+  "background_color": "#ffffff",
+  "lang": "fr-FR",
+  "dir": "ltr",
+  "categories": [
+    "health",
+    "medical",
+    "lifestyle",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
