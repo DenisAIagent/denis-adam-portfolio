@@ -7,6 +7,7 @@
 "use strict";
 
 const CV_PDF = "Denis Adam — présentation.pdf";
+const WEB3FORMS_KEY = "5a0ee044-9d20-4554-8cfa-4ad1eea64ad6"; // clé publique (mappe vers l'inbox côté Web3Forms)
 
 const PROJECTS = [
   {
@@ -427,12 +428,25 @@ function setupContactForm() {
     btn.disabled = true; const label = btn.textContent; btn.textContent = "Envoi…";
     status.textContent = "";
     try {
-      const r = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      const r = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `Portfolio — message de ${data.name}`,
+          from_name: "Portfolio Denis Adam",
+          name: data.name,
+          email: data.email,
+          replyto: data.email,
+          message: data.message,
+          botcheck: data.company ? true : false, // honeypot
+        }),
+      });
       const j = await r.json().catch(() => ({}));
-      if (r.ok && j.ok) {
+      if (j.success) {
         showContactSuccess(form, data.name);
       } else {
-        status.textContent = j.error || "Une erreur est survenue. Réessaie."; status.classList.add("err");
+        status.textContent = j.message || "Une erreur est survenue. Réessaie."; status.classList.add("err");
       }
     } catch {
       status.textContent = "Connexion impossible. Réessaie dans un instant."; status.classList.add("err");
