@@ -1,8 +1,8 @@
 /* Zero-dependency static server + secure /api/contact endpoint (Resend).
    - Serves the portfolio and embedded apps with correct MIME types.
-   - POST /api/contact: honeypot + validation + rate-limit, sends via Resend.
+   - POST /api/contact: honeypot + validation + rate-limit, sends via Web3Forms.
    - Binds to 0.0.0.0:$PORT.
-   Required env for the form: RESEND_API_KEY, CONTACT_TO, CONTACT_FROM. */
+   Required env for the form: WEB3FORMS_KEY (access key tied to the recipient email). */
 "use strict";
 
 const http = require("http");
@@ -85,41 +85,34 @@ async function handleContact(req, res) {
     if (!isEmail(email)) return sendJSON(res, 422, { ok: false, error: "Email invalide." });
     if (message.length < 10) return sendJSON(res, 422, { ok: false, error: "Message trop court." });
 
-    const KEY = process.env.RESEND_API_KEY;
-    const TO = process.env.CONTACT_TO;
-    const FROM = process.env.CONTACT_FROM;
-    if (!KEY || !TO || !FROM) {
-      console.error("Contact form: missing env (RESEND_API_KEY / CONTACT_TO / CONTACT_FROM)");
+    const KEY = process.env.WEB3FORMS_KEY;
+    if (!KEY) {
+      console.error("Contact form: missing env WEB3FORMS_KEY");
       return sendJSON(res, 500, { ok: false, error: "Service email non configuré." });
     }
 
-    const html = `
-      <h2>Nouveau message — portfolio</h2>
-      <p><b>Nom :</b> ${escapeHtml(name)}</p>
-      <p><b>Email :</b> ${escapeHtml(email)}</p>
-      <p><b>Message :</b></p>
-      <p style="white-space:pre-wrap">${escapeHtml(message)}</p>`;
-
     try {
-      const r = await fetch("https://api.resend.com/emails", {
+      const r = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          from: FROM,
-          to: [TO],
-          reply_to: email,
+          access_key: KEY,
           subject: `Portfolio — message de ${name}`,
-          html,
+          from_name: "Portfolio Denis Adam",
+          name,
+          email,
+          replyto: email,
+          message,
         }),
       });
-      if (!r.ok) {
-        const t = await r.text().catch(() => "");
-        console.error("Resend error", r.status, t.slice(0, 300));
+      const jr = await r.json().catch(() => ({}));
+      if (!r.ok || !jr.success) {
+        console.error("Web3Forms error", r.status, JSON.stringify(jr).slice(0, 300));
         return sendJSON(res, 502, { ok: false, error: "Envoi impossible pour le moment." });
       }
       return sendJSON(res, 200, { ok: true });
     } catch (e) {
-      console.error("Resend fetch failed", e.message);
+      console.error("Web3Forms fetch failed", e.message);
       return sendJSON(res, 502, { ok: false, error: "Envoi impossible pour le moment." });
     }
   });
