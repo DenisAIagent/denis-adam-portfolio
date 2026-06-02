@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=6" />
+<link rel="stylesheet" href="./styles.css?v=7" />
 </head>
 <body>
 
@@ -137,8 +137,8 @@
           <span>Message</span>
           <textarea name="message" rows="4" required maxlength="5000" placeholder="Ton projet en quelques lignes…"></textarea>
         </label>
-        <!-- honeypot anti-spam : ne pas remplir -->
-        <input type="text" name="company" class="cf-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <!-- honeypot anti-spam Web3Forms (checkbox cachée, non auto-remplissable) -->
+        <input type="checkbox" name="botcheck" class="cf-hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
         <div class="cf-actions">
           <button type="submit" class="btn green" id="cfSubmit">Envoyer le message →</button>
           <span class="cf-status" id="cfStatus" role="status" aria-live="polite"></span>
@@ -179,6 +179,6 @@
   </div>
 </div>
 
-<script src="./app.js?v=6"></script>
+<script src="./app.js?v=7"></script>
 </body>
 </html>

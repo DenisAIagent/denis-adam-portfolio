@@ -420,7 +420,6 @@ function setupContactForm() {
       name: form.name.value.trim(),
       email: form.email.value.trim(),
       message: form.message.value.trim(),
-      company: form.company.value, // honeypot
     };
     if (data.name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) || data.message.length < 10) {
       status.textContent = "Vérifie le nom, l'email et le message (10 car. min)."; status.classList.add("err"); return;
@@ -428,19 +427,20 @@ function setupContactForm() {
     btn.disabled = true; const label = btn.textContent; btn.textContent = "Envoi…";
     status.textContent = "";
     try {
+      // pattern officiel Web3Forms : FormData (requête simple, pas de preflight CORS)
+      const fd = new FormData();
+      fd.append("access_key", WEB3FORMS_KEY);
+      fd.append("subject", `Portfolio — message de ${data.name}`);
+      fd.append("from_name", "Portfolio Denis Adam");
+      fd.append("name", data.name);
+      fd.append("email", data.email);
+      fd.append("replyto", data.email);
+      fd.append("message", data.message);
+      if (form.botcheck && form.botcheck.checked) fd.append("botcheck", "true"); // honeypot
       const r = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: `Portfolio — message de ${data.name}`,
-          from_name: "Portfolio Denis Adam",
-          name: data.name,
-          email: data.email,
-          replyto: data.email,
-          message: data.message,
-          botcheck: data.company ? true : false, // honeypot
-        }),
+        headers: { Accept: "application/json" }, // pas de Content-Type : le navigateur pose le boundary
+        body: fd,
       });
       const j = await r.json().catch(() => ({}));
       if (j.success) {
@@ -463,3 +463,4 @@ renderProjects();
 renderSkills();
 setupObservers();
 setupNav();
+setupContactForm();
