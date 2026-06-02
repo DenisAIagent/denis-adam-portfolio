@@ -439,3 +439,19 @@ footer .stop { color: var(--accent); }
 .cf-status.ok { color: var(--accent-deep); }
 .cf-status.err { color: #c0392b; }
 @media (max-width: 560px) { .cf-row { grid-template-columns: 1fr; } }
+
+/* confirmation d'envoi du formulaire */
+.cform-success {
+  max-width: 620px; margin: 0 auto 26px; text-align: center;
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  padding: 34px 28px; box-shadow: var(--shadow);
+  animation: csIn .45s var(--ease) both;
+}
+@keyframes csIn { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+.cform-success .cs-check {
+  width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 28px; font-weight: 700;
+  color: #fff; background: var(--accent); box-shadow: 0 0 0 6px rgba(26,166,74,.14);
+}
+.cform-success h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem); margin: 0 0 8px; }
+.cform-success p { color: var(--ink-2); margin: 0 0 18px; font-size: 16px; }

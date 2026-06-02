@@ -394,6 +394,21 @@ window.addEventListener("keydown", (e) => {
 });
 
 /* ---------- contact form ---------- */
+function showContactSuccess(form, name) {
+  const safe = (name || "").replace(/[<>&]/g, "");
+  const card = document.createElement("div");
+  card.className = "cform-success reveal in";
+  card.setAttribute("role", "status");
+  card.innerHTML = `
+    <div class="cs-check">✓</div>
+    <h3>Message envoyé${safe ? `, merci ${safe}` : ", merci"} !</h3>
+    <p>C'est bien parti — je te réponds sous 24 h, en général bien avant.</p>
+    <button type="button" class="btn ghost" id="cfAgain">Envoyer un autre message</button>`;
+  form.replaceWith(card);
+  const again = card.querySelector("#cfAgain");
+  again.addEventListener("click", () => { card.replaceWith(form); form.reset(); const s = $("#cfStatus"); if (s) { s.textContent = ""; s.className = "cf-status"; } });
+}
+
 function setupContactForm() {
   const form = $("#cform"); if (!form) return;
   const btn = $("#cfSubmit"), status = $("#cfStatus");
@@ -415,7 +430,7 @@ function setupContactForm() {
       const r = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
       const j = await r.json().catch(() => ({}));
       if (r.ok && j.ok) {
-        form.reset(); status.textContent = "✓ Message envoyé — merci, je reviens vite vers toi."; status.classList.add("ok");
+        showContactSuccess(form, data.name);
       } else {
         status.textContent = j.error || "Une erreur est survenue. Réessaie."; status.classList.add("err");
       }
