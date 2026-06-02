@@ -416,14 +416,15 @@ function setupContactForm() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     status.className = "cf-status";
+    const get = (n) => form.querySelector(`[name="${n}"]`); // évite la collision form.name → HTMLFormElement.name
     const data = {
-      name: form.name.value.trim(),
-      email: form.email.value.trim(),
-      message: form.message.value.trim(),
+      name: (get("name")?.value || "").trim(),
+      email: (get("email")?.value || "").trim(),
+      message: (get("message")?.value || "").trim(),
     };
-    if (data.name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) || data.message.length < 10) {
-      status.textContent = "Vérifie le nom, l'email et le message (10 car. min)."; status.classList.add("err"); return;
-    }
+    if (data.name.length < 2) { status.textContent = "Indique ton nom."; status.classList.add("err"); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) { status.textContent = "Email invalide."; status.classList.add("err"); return; }
+    if (data.message.length < 10) { status.textContent = "Ton message est un peu court (10 caractères minimum)."; status.classList.add("err"); return; }
     btn.disabled = true; const label = btn.textContent; btn.textContent = "Envoi…";
     status.textContent = "";
     try {
@@ -436,7 +437,7 @@ function setupContactForm() {
       fd.append("email", data.email);
       fd.append("replyto", data.email);
       fd.append("message", data.message);
-      if (form.botcheck && form.botcheck.checked) fd.append("botcheck", "true"); // honeypot
+      const bot = get("botcheck"); if (bot && bot.checked) fd.append("botcheck", "true"); // honeypot
       const r = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { Accept: "application/json" }, // pas de Content-Type : le navigateur pose le boundary
